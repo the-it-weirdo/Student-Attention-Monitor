@@ -2,28 +2,35 @@ import numpy as np
 import mediapipe as mp
 import cv2
 import tensorflow as tf
+import re
 
 
-saved_model_path = "./trained_xception.h5"
+saved_model_path = "models/engage_2class_1.h5"
+# saved_model_path = "models/trained_xception.h5" # for xcpetion
 
 model = tf.keras.models.load_model(saved_model_path)
 
-class_indices = {0: "['Bored', 'Confused', 'Frustrated']",
-                 1: "['Bored', 'Confused']",
-                 2: "['Bored', 'Engaged', 'Confused', 'Frustrated']",
-                 3: "['Bored', 'Engaged', 'Confused']",
-                 4: "['Bored', 'Engaged', 'Frustrated']",
-                 5: "['Bored', 'Engaged']",
-                 6: "['Bored', 'Frustrated']",
-                 7: "['Bored']",
-                 8: "['Confused', 'Frustrated']",
-                 9: "['Confused']",
-                 10: "['Engaged', 'Confused', 'Frustrated']",
-                 11: "['Engaged', 'Confused']",
-                 12: "['Engaged', 'Frustrated']",
-                 13: "['Engaged']",
-                 14: "['Frustrated']",
-                 15: "['Unknown']"}
+class_indices_xception = {0: "['Bored', 'Confused', 'Frustrated']",
+                          1: "['Bored', 'Confused']",
+                          2: "['Bored', 'Engaged', 'Confused', 'Frustrated']",
+                          3: "['Bored', 'Engaged', 'Confused']",
+                          4: "['Bored', 'Engaged', 'Frustrated']",
+                          5: "['Bored', 'Engaged']",
+                          6: "['Bored', 'Frustrated']",
+                          7: "['Bored']",
+                          8: "['Confused', 'Frustrated']",
+                          9: "['Confused']",
+                          10: "['Engaged', 'Confused', 'Frustrated']",
+                          11: "['Engaged', 'Confused']",
+                          12: "['Engaged', 'Frustrated']",
+                          13: "['Engaged']",
+                          14: "['Frustrated']",
+                          15: "['Unknown']"}
+
+class_indices_dense = {
+    0: "Engaged",
+    1: "Not Engaged"
+}
 
 
 mp_drawing = mp.solutions.drawing_utils
@@ -35,8 +42,20 @@ def xception_preprocess(frame):
     return tf.keras.applications.xception.preprocess_input(frame)
 
 
-def dnn_preprocess():
-    pass
+def dnn_preprocess(inp):
+    x_regex = r"x: ([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)$"
+    y_regex = r"y: ([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)$"
+    z_regex = r"z: ([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)$"
+
+    x_matches = re.findall(x_regex, inp, re.MULTILINE)
+    y_matches = re.findall(y_regex, inp, re.MULTILINE)
+    z_matches = re.findall(z_regex, inp, re.MULTILINE)
+
+    data = [(np.double(x[0]), np.double(y[0]), np.double(z[0]))
+            for x, y, z in zip(x_matches, y_matches, z_matches)]
+
+    data = np.array(data)
+    return data.flatten()
 
 
 def live():
@@ -90,19 +109,20 @@ def live():
                         connection_drawing_spec=mp_drawing_styles
                         .get_default_face_mesh_iris_connections_style())
 
-                # black.flags.writeable = False
                 # preprocess
-                processed = xception_preprocess(black.copy())
+                processed = dnn_preprocess(
+                    str(results.multi_face_landmarks[0].landmark))
+                # processed = xception_preprocess(black.copy()) # for xception model
 
                 if processed is not None:
                     inp = np.array([processed])
                     predicted = model.predict(inp)
 
-                    # predicted_text = np.argmax(predicted)
-                    predicted_text = class_indices[np.argmax(predicted)]
-                    # print(predicted_text)
+                    predicted_text = class_indices_dense[np.argmax(
+                        predicted)]
+                    # predicted_text = class_indices_xception[np.argmax(
+                    # predicted)] # for xception
 
-                # black.flags.writeable = True
             else:
                 predicted_text = "Not Engaged"
 
