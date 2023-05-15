@@ -23,7 +23,6 @@ def setup_logger(name, log_file, level=logging.INFO):
 
 
 error_logger = setup_logger("error", "raw_process_errors.log", logging.ERROR)
-info_logger = setup_logger("info", "raw_process_info.log", logging.INFO)
 
 
 mp_drawing = mp.solutions.drawing_utils
@@ -48,18 +47,15 @@ def mediapipe_image(frame, filepath):
             return None
         # landmark vector with xyz
         return results.multi_face_landmarks[0].landmark
-        # for face_landmarks in results.multi_face_landmarks:
-
-        # print(results)
 
 
 tqdm.pandas()
 chunksize = 1000
 
-with pd.read_csv("Raw_Multilabel20.csv", chunksize=chunksize) as reader:
+with pd.read_csv("CSVs/Raw_Multilabel20.csv", chunksize=chunksize) as reader:
     for i, chunk in enumerate(reader):
         chunk["Mediapipe Output"] = chunk["Filepath"].progress_apply(
             lambda x: mediapipe_image(cv2.imread(x), x))
 
         chunk.to_csv(
-            f"Mediapipe_vector/Medipipe_vector_out_chunk_{i}.csv", index=False)
+            f"CSVs/Mediapipe_vector/Medipipe_vector_out_chunk_{i}.csv", index=False)

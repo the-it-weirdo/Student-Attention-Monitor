@@ -59,7 +59,6 @@ def dnn_preprocess(inp):
 
 
 def live():
-    drawing_spec = mp_drawing.DrawingSpec(thickness=1, circle_radius=1)
     cap = cv2.VideoCapture(0)
     with mp_face_mesh.FaceMesh(
             max_num_faces=1,
@@ -73,8 +72,6 @@ def live():
                 # If loading a video, use 'break' instead of 'continue'.
                 continue
 
-            # To improve performance, optionally mark the image as not writeable to
-            # pass by reference.
             image.flags.writeable = False
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             results = face_mesh.process(image)
@@ -135,8 +132,6 @@ def live():
 
             cv2.imshow('MediaPipe Face Mesh (Press esc to close)',
                        cv2.flip(black, 1))
-            # cv2.imshow('Xception Processed (Press esc to close)',
-            #            cv2.flip(processed, 1))
 
             if cv2.waitKey(5) & 0xFF == 27:
                 break

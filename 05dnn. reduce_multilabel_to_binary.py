@@ -9,7 +9,6 @@ import re
 x_regex = r"x: ([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)$"
 y_regex = r"y: ([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)$"
 z_regex = r"z: ([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)$"
-# r"(x: [-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$)\n(y: [-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)\n(z: [-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)"
 
 
 def extract_xyz(inp):
@@ -46,7 +45,6 @@ df = pd.concat(df_list, ignore_index=True)
 
 print(df)
 print(df.shape)
-# df = pd.read_csv("Mediapipe_vector\Medipipe_vector_out_chunk_0.csv")
 
 df = df[["Mediapipe Output", "label"]]
 
@@ -57,7 +55,6 @@ df['Mediapipe Output'] = df["Mediapipe Output"].progress_apply(
 
 df["label"] = df["label"].progress_apply(lambda x: reduce_label(eval(x)))
 
-# print(df.value_counts())
 df.dropna(inplace=True, ignore_index=True)
 
 
