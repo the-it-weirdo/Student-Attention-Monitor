@@ -1,3 +1,7 @@
+'''
+Code to process the labels.
+It converts the very low, low, high and very high labels in the raw dataset to multi-class labels.
+'''
 import pandas as pd
 import os
 
@@ -28,6 +32,7 @@ def generate_multilabel_list(bored, engaged, confused, frustrated):
 
 df = pd.read_csv(processed_dataset)
 
+# 2 -> high. So if more or equal to 2, image belongs to that class.
 df['label'] = df.apply(lambda x: generate_multilabel_list(x["Boredom"] >= 2,
                                                           x["Engagement"] >= 2,
                                                           x["Confusion"] >= 2,

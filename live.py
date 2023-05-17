@@ -1,12 +1,16 @@
+'''
+Code to run live prediction of student engagement
+'''
 import numpy as np
 import mediapipe as mp
 import cv2
 import tensorflow as tf
 import re
 
-
-saved_model_path = "models/engage_2class_1.h5"
-# saved_model_path = "models/trained_xception.h5" # for xcpetion
+# Choose any model. Remember you will have to change the pre-processing function and the prediction part accordingly.
+# ======================= Uncomment accordingly =======================
+# saved_model_path = "models/engage_2class_1.h5"
+saved_model_path = "models/trained_xception.h5"  # for xcpetion
 
 model = tf.keras.models.load_model(saved_model_path)
 
@@ -39,10 +43,16 @@ mp_face_mesh = mp.solutions.face_mesh
 
 
 def xception_preprocess(frame):
+    '''
+    Pre-processing function for Xcpetion model
+    '''
     return tf.keras.applications.xception.preprocess_input(frame)
 
 
 def dnn_preprocess(inp):
+    '''
+    Pre-processing function for fully connected DNN
+    '''
     x_regex = r"x: ([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)$"
     y_regex = r"y: ([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)$"
     z_regex = r"z: ([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)$"
@@ -59,6 +69,9 @@ def dnn_preprocess(inp):
 
 
 def live():
+    '''
+    Function for live run
+    '''
     cap = cv2.VideoCapture(0)
     with mp_face_mesh.FaceMesh(
             max_num_faces=1,
@@ -106,19 +119,21 @@ def live():
                         connection_drawing_spec=mp_drawing_styles
                         .get_default_face_mesh_iris_connections_style())
 
-                # preprocess
-                processed = dnn_preprocess(
-                    str(results.multi_face_landmarks[0].landmark))
-                # processed = xception_preprocess(black.copy()) # for xception model
+                # preprocess functions
+                # ======================= Uncomment accordingly =======================
+                # processed = dnn_preprocess(str(results.multi_face_landmarks[0].landmark))
+                processed = xception_preprocess(
+                    black.copy())  # for xception model
 
                 if processed is not None:
                     inp = np.array([processed])
                     predicted = model.predict(inp)
 
-                    predicted_text = class_indices_dense[np.argmax(
-                        predicted)]
-                    # predicted_text = class_indices_xception[np.argmax(
-                    # predicted)] # for xception
+                    # ======================= Uncomment accordingly =======================
+                    # predicted_text = class_indices_dense[np.argmax(
+                    # predicted)]  # for fc-dnn
+                    predicted_text = class_indices_xception[np.argmax(
+                        predicted)]  # for xception
 
             else:
                 predicted_text = "Not Engaged"
@@ -129,9 +144,6 @@ def live():
                         cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, 2)
             cv2.imshow('Camera Capture(Press esc to close)',
                        image)
-
-            cv2.imshow('MediaPipe Face Mesh (Press esc to close)',
-                       cv2.flip(black, 1))
 
             if cv2.waitKey(5) & 0xFF == 27:
                 break

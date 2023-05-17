@@ -1,3 +1,6 @@
+'''
+Code to train the Xception model
+'''
 import tensorflow as tf
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -16,13 +19,19 @@ IMG_SHAPE = (299, 299, 3)
 
 
 def create_model():
+    '''
+    Function to build the xception model
+    '''
+    # base model as Xception
+    # removed top layer
     base_model = tf.keras.applications.Xception(include_top=False,
                                                 weights='imagenet',
                                                 pooling="avg",
                                                 input_shape=IMG_SHAPE)
 
-    base_model.trainable = False
+    base_model.trainable = False  # ensuring base model is not trainable
 
+    # top layer
     top = tf.keras.models.Sequential()
     top.add(tf.keras.layers.Dense(256, activation="relu",
             input_shape=base_model.output_shape[1:]))
@@ -37,63 +46,12 @@ def create_model():
     model.compile(optimizer=tf.keras.optimizers.RMSprop(learning_rate=0.001),
                   loss=tf.keras.losses.CategoricalCrossentropy(), metrics=["accuracy"])
 
-    # x = tf.keras.layers.GlobalAveragePooling2D()(base_model.output)
-    # x = tf.keras.layers.Dense(128, activation="relu", name="fc1")(x)
-    # x = tf.keras.layers.Dense(64, activation="relu", name="fc2")(x)
-    # boredom = tf.keras.layers.Dense(4, name="y1")(x)
-    # engagement = tf.keras.layers.Dense(4, name="y2")(x)
-    # confusion = tf.keras.layers.Dense(4, name="y3")(x)
-    # frustration = tf.keras.layers.Dense(4, name="y4")(x)
-    # model = tf.keras.Model(inputs=base_model.input,
-    #                        outputs=[boredom, engagement, confusion, frustration])
-
-    # model.compile(optimizer=tf.keras.optimizers.RMSprop(learning_rate=0.001),
-    #               loss={"y1": tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-    #                     "y2": tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-    #                     "y3": tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-    #                     "y4": tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)},
-    #               metrics={"y1": "sparse_categorical_accuracy",
-    #                        "y2": "sparse_categorical_accuracy",
-    #                        "y3": "sparse_categorical_accuracy",
-    #                        "y4": "sparse_categorical_accuracy"})
-
     tf.keras.utils.plot_model(base_model, "Base_Model.png")
     tf.keras.utils.plot_model(top, "Top_Layer.png")
     tf.keras.utils.plot_model(model, "Final_Model.png")
 
     return model
 
-
-def plot_history(history):
-    plt.plot(history.history['acc'])
-    plt.plot(history.history['val_acc'])
-    plt.title('model accuracy')
-    plt.ylabel('accuracy')
-    plt.xlabel('epoch')
-    plt.legend(['train', 'test'], loc='upper left')
-    plt.grid()
-    plt.savefig("Model_Accuracy.png")
-
-    plt.plot(history.history['loss'])
-    plt.plot(history.history['val_loss'])
-    plt.title('model loss')
-    plt.ylabel('loss')
-    plt.xlabel('epoch')
-    plt.legend(['train', 'test'], loc='upper left')
-    plt.grid()
-    plt.savefig("Model_Loss.png")
-
-
-# x1, y1 = next(validation_generator)
-
-# img = x1[1]
-# y = y1[1]
-
-# print(y)
-# print(validation_generator.classes)
-# print(len(validation_generator.classes))
-# plt.imshow(img)
-# plt.show()
 
 callbacks = [tf.keras.callbacks.ModelCheckpoint(
     filepath="Checkpoints",
@@ -108,20 +66,17 @@ callbacks = [tf.keras.callbacks.ModelCheckpoint(
 model = create_model()
 model.summary()
 
-
+# Reading input
 df = pd.read_csv(dataframe_path)
 
 df = df[["Filepath", "label"]]
 
-# train, test = train_test_split(df, test_size=0.2)
-
-# train.to_csv("Train.csv", index=False)
-# test.to_csv("Test.csv", index=False)
-
+# Using an ImageDataGenerator as data size is large
 generator = tf.keras.preprocessing.image.ImageDataGenerator(
     validation_split=0.3,
     preprocessing_function=tf.keras.applications.xception.preprocess_input)  # Change preprocessing function to your appropirate model
 
+# flowing from the Processed dataset
 train_generator = generator.flow_from_dataframe(
     dataframe=df, directory="./", x_col="Filepath", y_col="label", class_mode="categorical", batch_size=BATCH_SIZE, shuffle=True, subset="training")
 
@@ -142,4 +97,3 @@ with open("history.pickle", "wb") as outfile:
 
 
 model.save("trained_xception.h5")
-plot_history(history)

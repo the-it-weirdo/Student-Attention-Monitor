@@ -1,3 +1,6 @@
+'''
+This file creates the zero-matrix with facial landmark points from the extracted frames.
+'''
 import os
 import glob
 import cv2
@@ -6,11 +9,14 @@ import mediapipe as mp
 import logging
 from tqdm import tqdm
 
+# log output format
 formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
 
 
 def setup_logger(name, log_file, level=logging.INFO):
-
+    '''
+    Function to initialize a logger.
+    '''
     handler = logging.FileHandler(log_file)
     handler.setFormatter(formatter)
 
@@ -21,6 +27,7 @@ def setup_logger(name, log_file, level=logging.INFO):
     return logger
 
 
+# setting up loggers
 error_logger = setup_logger("error", "process_errors.log", logging.ERROR)
 info_logger = setup_logger("info", "process_info.log", logging.INFO)
 
@@ -31,7 +38,7 @@ drawing_spec = mp_drawing.DrawingSpec(thickness=1, circle_radius=1)
 
 
 def mediapipe_image(frame):
-    black = np.zeros(frame.shape)
+    black = np.zeros(frame.shape)  # creating a zero matrix
 
     with mp_face_mesh.FaceMesh(
             static_image_mode=True,

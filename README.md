@@ -4,5 +4,6 @@
 To get started:
 - Clone the repo
 - Open the folder as a workspace
+- Create a virtual environment: ```python -m venv <env-name>```
 - Run ```pip install -r requirements.txt```
-- Make your changes as required.
+- Run ```python live.py``` for the demo.

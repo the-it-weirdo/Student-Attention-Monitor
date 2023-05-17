@@ -1,3 +1,8 @@
+'''
+Code to split the dataset.
+We used this to reduce training complexity and tackle the time constraint.
+'''
+
 from sklearn.model_selection import train_test_split
 import pandas as pd
 

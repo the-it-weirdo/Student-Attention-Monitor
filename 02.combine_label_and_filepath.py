@@ -1,10 +1,26 @@
+'''
+This file combines the Label file provided by the dataset and filepaths of the images.
+
+Code to combine labels provided by the dataset with either raw extracted frames or processed images.
+
+A csv with the following columns is formed: 
+ClipID,Filepath,Boredom,Engagement,Confusion,Frustration
+
+Filepath will contain raw frames file path or processed image filepath
+'''
+
 import os
 import pandas as pd
 
 
 raw_labels_file = "Labels/AllLabels.csv"
 img_dir = "DataSet"
-processed_df_fname = "raw_image_labelled.csv"
+processed_df_fname = "CSVs/raw_image_labelled.csv"
+
+# This file needs to be re-run after the Processed folder containing the zero-matrix images have been created.
+# Uncomment the following 2 lines for combining processed images filepaths
+# img_dir = "Processed"
+# processed_df_fname = "Processed.csv"
 
 # reading the alllabels.csv from the raw dataset
 df = pd.read_csv(raw_labels_file)

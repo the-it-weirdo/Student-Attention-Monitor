@@ -1,3 +1,6 @@
+'''
+This code is for extracting the 478 facial landmark points (x,y,z) using mediapipe and writing them into a csv
+'''
 import pandas as pd
 import numpy as np
 import mediapipe as mp
@@ -6,12 +9,14 @@ import cv2
 from tqdm import tqdm
 import os
 
-
+# log output format
 formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
 
 
 def setup_logger(name, log_file, level=logging.INFO):
-
+    '''
+    Function to initialize a logger.
+    '''
     handler = logging.FileHandler(log_file)
     handler.setFormatter(formatter)
 
@@ -22,6 +27,7 @@ def setup_logger(name, log_file, level=logging.INFO):
     return logger
 
 
+# initialize logger
 error_logger = setup_logger("error", "raw_process_errors.log", logging.ERROR)
 
 
