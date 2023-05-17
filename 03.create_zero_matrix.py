@@ -38,6 +38,9 @@ drawing_spec = mp_drawing.DrawingSpec(thickness=1, circle_radius=1)
 
 
 def mediapipe_image(frame):
+    '''
+    Function to create a zero-matrix with facial landmark points obtained from mediapipe.
+    '''
     black = np.zeros(frame.shape)  # creating a zero matrix
 
     with mp_face_mesh.FaceMesh(
