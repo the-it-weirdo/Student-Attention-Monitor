@@ -1,6 +1,7 @@
 '''
 Code to process the labels.
 It converts the very low, low, high and very high labels in the raw dataset to multi-class labels.
+Author: Team 1
 '''
 import pandas as pd
 import os

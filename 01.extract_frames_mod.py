@@ -1,6 +1,6 @@
 '''
 This file extracts the frames from the video data. Make sure the dataset is located inside the Dataset folder in the same directory.
-Author: Debaleen Das Spandan
+Author: Team 1
 '''
 
 import os

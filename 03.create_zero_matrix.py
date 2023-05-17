@@ -1,5 +1,6 @@
 '''
 This file creates the zero-matrix with facial landmark points from the extracted frames.
+Author: Team 1
 '''
 import os
 import glob

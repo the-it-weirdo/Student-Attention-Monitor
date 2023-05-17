@@ -1,5 +1,6 @@
 '''
 Code to run live prediction of student engagement
+Author: Team 1
 '''
 import numpy as np
 import mediapipe as mp

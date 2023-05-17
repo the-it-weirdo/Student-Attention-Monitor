@@ -1,5 +1,6 @@
 '''
 This code is for extracting the 478 facial landmark points (x,y,z) using mediapipe and writing them into a csv
+Author: Team 1
 '''
 import pandas as pd
 import numpy as np

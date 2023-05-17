@@ -7,6 +7,7 @@ A csv with the following columns is formed:
 ClipID,Filepath,Boredom,Engagement,Confusion,Frustration
 
 Filepath will contain raw frames file path or processed image filepath
+Author: Team 1
 '''
 
 import os

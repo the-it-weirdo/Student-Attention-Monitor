@@ -1,6 +1,7 @@
 '''
 Code to reduce mult-class labels to binary classes. 
 This code also converts str xyz facial landmark points to numpy array
+Author: Team 1
 '''
 import glob
 import pandas as pd

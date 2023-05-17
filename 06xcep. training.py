@@ -1,5 +1,6 @@
 '''
 Code to train the Xception model
+Author: Team 1
 '''
 import tensorflow as tf
 import pandas as pd
