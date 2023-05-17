@@ -15,6 +15,9 @@ multilabel_dataset = "Multilabel.csv"
 
 
 def generate_multilabel_list(bored, engaged, confused, frustrated):
+    '''
+    Function to create multi-class labels 
+    '''
     label = []
     if bored:
         label.append("Bored")
